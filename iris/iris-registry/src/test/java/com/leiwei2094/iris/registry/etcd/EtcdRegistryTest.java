@@ -4,11 +4,14 @@ import com.leiwei2094.iris.core.Endpoint;
 import com.leiwei2094.iris.registry.EtcdRegistry;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @Ignore
 public class EtcdRegistryTest {
+    private static final Logger log = LoggerFactory.getLogger(EtcdRegistry.class);
 
     @Test
     public void test() throws Exception {
@@ -27,7 +30,7 @@ public class EtcdRegistryTest {
         EtcdRegistry registry = new EtcdRegistry("http://127.0.0.1:2379");
         for (int i = 0; i < 50; i++) {
             List<Endpoint> endpoints = registry.find("com.leiwei2094.IHelloService");
-            System.out.println(endpoints);
+            log.info(String.valueOf(endpoints));
             Thread.sleep(2 * 1000);
         }
     }

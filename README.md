@@ -113,7 +113,7 @@ server.run();
 RpcClient client = new RpcClient(registry);
 IHelloService helloService = client.create(IHelloService.class);
 String s = helloService.hello("leo");
-System.out.println(s);   // hello, leo
+log.info(s);   // hello, leo
 ```
 6. 停止server
 ```text
@@ -144,7 +144,7 @@ public class Baz {
     private IHelloService helloService;
 
     public void hello(String name) throws Exception {
-        System.out.println(helloService.hello(name));
+        log.info(helloService.hello(name));
     }
 }
 

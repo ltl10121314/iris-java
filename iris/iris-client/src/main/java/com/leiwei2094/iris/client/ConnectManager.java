@@ -12,10 +12,13 @@ import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class ConnectManager implements IConnectManager, IEventCallback {
+    private static final Logger log = LoggerFactory.getLogger(ConnectManager.class);
 
     private IRegistry registry;
     private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(4);
@@ -41,7 +44,7 @@ public class ConnectManager implements IConnectManager, IEventCallback {
         int size = channelsByService.get(serviceName).size();
         ILoadBalance loadBalance = ExtensionLoader.getExtensionLoader(ILoadBalance.class).getAdaptiveInstance();
         if (0 == size) {
-            System.out.println("NO available providers for service: " + serviceName);
+            log.info("NO available providers for service: {}", serviceName);
         }
 
         String loadbalance = IrisConfig.get("iris.loadbalance");
@@ -49,16 +52,16 @@ public class ConnectManager implements IConnectManager, IEventCallback {
         map.put("loadbalance", loadbalance);
         int index = loadBalance.select(map, size);
         ChannelWrapper channelWrapper = channelsByService.get(serviceName).get(index);
-        System.out.println("Load balance:" + loadbalance + "; Selected endpoint: " + channelWrapper.toString());
+        log.info("Load balance:{}; Selected endpoint: {}", loadbalance, channelWrapper.toString());
         return channelWrapper.getChannel();
     }
 
     private ChannelWrapper connect(String host, int port) throws Exception {
 
         Bootstrap b = new Bootstrap()
-            .group(eventLoopGroup)
-            .channel(NioSocketChannel.class)
-            .handler(new RpcClientInitializer());
+                .group(eventLoopGroup)
+                .channel(NioSocketChannel.class)
+                .handler(new RpcClientInitializer());
 
         Channel channel = b.connect(host, port).sync().channel();
         ChannelWrapper channelWrapper = new ChannelWrapper(new Endpoint(host, port), channel);

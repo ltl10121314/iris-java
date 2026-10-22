@@ -8,9 +8,12 @@ import com.coreos.jetcd.kv.GetResponse;
 import com.coreos.jetcd.options.GetOption;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Ignore
 public class GetTest {
+    private static final Logger log = LoggerFactory.getLogger(GetTest.class);
 
     @Test
     public void testGetWithPrefix() throws Exception {
@@ -31,7 +34,7 @@ public class GetTest {
         GetResponse response = kvClient.get(dsfs, GetOption.newBuilder().withPrefix(key).build()).get();
 
         for (KeyValue kv : response.getKvs()) {
-            System.out.println(kv.getKey().toStringUtf8() + " : " + kv.getValue().toStringUtf8());
+            log.info("{} : {}", kv.getKey().toStringUtf8(), kv.getValue().toStringUtf8());
         }
     }
 }

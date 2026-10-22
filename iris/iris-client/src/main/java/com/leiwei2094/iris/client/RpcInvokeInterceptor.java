@@ -5,11 +5,14 @@ import io.netty.channel.Channel;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class RpcInvokeInterceptor {
+    private static final Logger log = LoggerFactory.getLogger(RpcInvokeInterceptor.class);
 
     private IConnectManager connectManager;
 
@@ -20,7 +23,7 @@ public class RpcInvokeInterceptor {
     @RuntimeType
     public Object intercept(@AllArguments Object[] args, @Origin Method method) throws Exception {
         String name = method.getDeclaringClass().getName();
-        System.out.println(name);
+        log.info(name);
         // create rpc request
         RpcRequest request = new RpcRequest();
         request.setRequestId(UUID.randomUUID().toString());

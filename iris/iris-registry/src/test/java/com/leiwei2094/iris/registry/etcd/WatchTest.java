@@ -7,9 +7,12 @@ import com.coreos.jetcd.options.WatchOption;
 import com.coreos.jetcd.watch.WatchEvent;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Ignore
 public class WatchTest {
+    private static final Logger log = LoggerFactory.getLogger(WatchTest.class);
 
     @Test
     public void testWatchPrefix() throws Exception {
@@ -20,9 +23,9 @@ public class WatchTest {
 
         while (true) {
             for (WatchEvent event : watcher.listen().getEvents()) {
-                System.out.println(event.getEventType());
-                System.out.println(event.getKeyValue().getKey().toStringUtf8());
-                System.out.println(event.getKeyValue().getValue().toStringUtf8());
+                log.info(String.valueOf(event.getEventType()));
+                log.info(event.getKeyValue().getKey().toStringUtf8());
+                log.info(event.getKeyValue().getValue().toStringUtf8());
             }
         }
     }

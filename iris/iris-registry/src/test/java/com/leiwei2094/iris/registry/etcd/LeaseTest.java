@@ -9,11 +9,14 @@ import com.coreos.jetcd.options.LeaseOption;
 import com.coreos.jetcd.options.PutOption;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
 @Ignore
 public class LeaseTest {
+    private static final Logger log = LoggerFactory.getLogger(LeaseTest.class);
     @Test
     public void test() throws Exception {
         Client client = Client.builder().endpoints("http://127.0.0.1:2379").build();
@@ -22,7 +25,7 @@ public class LeaseTest {
         CompletableFuture<LeaseGrantResponse> future = lease.grant(20);
         LeaseGrantResponse response = future.get();
         long leaseId = response.getID();
-        System.out.println("New lease, id:" + leaseId + ", Hex format: " + Long.toHexString(leaseId));
+        log.info("New lease, id:" + leaseId + ", Hex format: " + Long.toHexString(leaseId));
 
         ByteSequence key = ByteSequence.fromString("abc");
         ByteSequence value = ByteSequence.fromString("220");
@@ -39,7 +42,7 @@ public class LeaseTest {
         CompletableFuture<LeaseGrantResponse> future = lease.grant(20);
         LeaseGrantResponse response = future.get();
         long leaseId = response.getID();
-        System.out.println("New lease, id:" + leaseId + ", Hex format: " + Long.toHexString(leaseId));
+        log.info("New lease, id:{}, Hex format: {}", leaseId, Long.toHexString(leaseId));
 
         KV kvClient = client.getKVClient();
 
@@ -58,14 +61,12 @@ public class LeaseTest {
         Lease lease = client.getLeaseClient();
 
         long leaseId = lease.grant(20).get().getID();
-        System.out.println("New lease, id:" + leaseId + ", Hex format: " + Long.toHexString(leaseId));
+        log.info("New lease, id:{}, Hex format: {}", leaseId, Long.toHexString(leaseId));
 
         for (int i = 0; i < 10; i++) {
-            System.out.println(
-                "Time to alive before keep-alive: " + lease.timeToLive(leaseId, LeaseOption.DEFAULT).get().getTTl());
+            log.info("Time to alive before keep-alive: {}", lease.timeToLive(leaseId, LeaseOption.DEFAULT).get().getTTl());
             lease.keepAlive(leaseId).listen();
-            System.out.println(
-                "Time to alive after  keep-alive: " + lease.timeToLive(leaseId, LeaseOption.DEFAULT).get().getTTl());
+            log.info("Time to alive after  keep-alive: {}", lease.timeToLive(leaseId, LeaseOption.DEFAULT).get().getTTl());
             Thread.sleep(3000);
         }
     }

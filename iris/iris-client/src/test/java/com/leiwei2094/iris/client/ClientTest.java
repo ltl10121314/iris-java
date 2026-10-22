@@ -5,12 +5,15 @@ import com.leiwei2094.iris.registry.EtcdRegistry;
 import com.leiwei2094.iris.registry.IRegistry;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Ignore
 public class ClientTest {
+    private static final Logger log = LoggerFactory.getLogger(ClientTest.class);
 
     @Test
     public void test() throws Exception {
@@ -21,15 +24,15 @@ public class ClientTest {
             try {
                 IHelloService helloService = client.create(IHelloService.class);
                 String s = helloService.hello("leo");
-                System.out.println("====" + s);
+                log.info("===={}", s);
 
                 String s2 = helloService.hello("tom");
-                System.out.println("====" + s2);
+                log.info("===={}", s2);
 
                 String s3 = helloService.hello("jerry");
-                System.out.println("====" + s3);
+                log.info("===={}", s3);
 
-                System.out.println("==== rpc invoke finished...");
+                log.info("==== rpc invoke finished...");
                 Thread.sleep(2 * 1000);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -47,6 +50,6 @@ public class ClientTest {
         com.leiwei2094.iris.core.IHelloService helloService =
             client.create(com.leiwei2094.iris.core.IHelloService.class);
         String s = helloService.hello("Hello");
-        System.out.println(s);
+        log.info(s);
     }
 }

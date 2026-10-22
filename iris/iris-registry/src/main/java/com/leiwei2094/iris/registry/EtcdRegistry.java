@@ -13,6 +13,8 @@ import com.coreos.jetcd.options.WatchOption;
 import com.coreos.jetcd.watch.WatchEvent;
 import com.leiwei2094.iris.core.Endpoint;
 import com.leiwei2094.iris.core.IpHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 
 public class EtcdRegistry implements IRegistry {
+    private static final Logger log = LoggerFactory.getLogger(EtcdRegistry.class);
 
     private final String rootPath = "iris";
     private String registryAddress = "http://127.0.0.1:2379";
@@ -40,7 +43,7 @@ public class EtcdRegistry implements IRegistry {
         this.kv = client.getKVClient();
         this.watch = client.getWatchClient();
         this.leaseId = lease.grant(30).get().getID();
-        //System.out.println("New lease, id:" + leaseId + ", Hex format: " + Long.toHexString(leaseId));
+        //log.info("New lease, id:" + leaseId + ", Hex format: " + Long.toHexString(leaseId));
 //        keepAlive();
         //watch();
     }
@@ -53,7 +56,7 @@ public class EtcdRegistry implements IRegistry {
         ByteSequence key = ByteSequence.fromString(strKey);
         ByteSequence val = ByteSequence.fromString("");     // 目前只需要创建这个key,对应的value暂不使用,先留空
         kv.put(key, val, PutOption.newBuilder().withLeaseId(leaseId).build()).get();
-        System.out.println("Register a new service at:" + strKey);
+        log.info("Register a new service at:" + strKey);
     }
 
     // 发送心跳到ETCD,表明该host是活着的
@@ -63,7 +66,7 @@ public class EtcdRegistry implements IRegistry {
                 try {
                     Lease.KeepAliveListener listener = lease.keepAlive(leaseId);
                     listener.listen();
-                    System.out.println("KeepAlive lease:" + leaseId + "; Hex format:" + Long.toHexString(leaseId));
+                    log.info("KeepAlive lease:" + leaseId + "; Hex format:" + Long.toHexString(leaseId));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -97,8 +100,8 @@ public class EtcdRegistry implements IRegistry {
             String host = endpointStr.split(":")[0];
             int port = Integer.valueOf(endpointStr.split(":")[1]);
 
-            //System.out.println(host);
-            //System.out.println(port);
+            //log.info(host);
+            //log.info(port);
 
             endpoints.add(new Endpoint(host, port));
         }
@@ -120,9 +123,9 @@ public class EtcdRegistry implements IRegistry {
             while (true) {
                 try {
                     for (WatchEvent event : watcher.listen().getEvents()) {
-                        System.out.println(event.getEventType());
-                        System.out.println(event.getKeyValue().getKey().toStringUtf8());
-                        System.out.println(event.getKeyValue().getValue().toStringUtf8());
+                        log.info(String.valueOf(event.getEventType()));
+                        log.info(event.getKeyValue().getKey().toStringUtf8());
+                        log.info(event.getKeyValue().getValue().toStringUtf8());
 
                         // /iris/com.leiwei2094.IHelloService/192.168.41.215:2000
 
