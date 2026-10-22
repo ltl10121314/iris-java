@@ -1,6 +1,6 @@
 package com.qibeitech.demob;
 
-import com.leibangzhu.iris.client.IRpcClient;
+import com.leiwei2094.iris.client.IRpcClient;
 import com.leibangzhu.iris.demoa.api.IHelloService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

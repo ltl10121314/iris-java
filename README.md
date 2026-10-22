@@ -24,9 +24,67 @@ iris支持以下使用方式:
 2. Spring配置方式，和Spring很好的集成
 3. Spring Boot配置方式，提供了一个spring boot starter，以自动配置，快速启动
 
+# 启动 etcd 注册中心
+iris 默认使用 etcd 作为注册中心，地址为 `127.0.0.1:2379`。使用前必须先启动 etcd，否则应用启动时会因为
+`EtcdRegistry` 连不上 etcd 而失败，报错类似：
+
+```text
+java.util.concurrent.ExecutionException:
+  io.grpc.StatusRuntimeException: UNAVAILABLE: Transport closed for unknown reason
+    at com.leiwei2094.iris.registry.EtcdRegistry.<init>(EtcdRegistry.java:42)
+```
+
+## 方式一：Docker（推荐）
+
+```bash
+docker run -d --name iris-etcd -p 2379:2379 -p 2380:2380 \
+  rancher/etcd:v3.4.13-k3s1 etcd --name etcd --data-dir /etcd-data \
+  --listen-client-urls http://0.0.0.0:2379 \
+  --advertise-client-urls http://127.0.0.1:2379
+```
+
+检查 etcd 是否正常：
+
+```bash
+curl http://127.0.0.1:2379/health
+# {"health":"true"}
+```
+
+容器创建后，日常只需：
+
+```bash
+docker start iris-etcd   # 启动
+docker stop iris-etcd    # 停止
+```
+
+## 方式二：本地安装
+
+macOS 可直接安装并启动：
+
+```bash
+brew install etcd
+etcd
+```
+
+Linux 可从 [etcd Releases](https://github.com/etcd-io/etcd/releases) 下载对应平台的二进制包并运行 `etcd`。
+
+## 启动示例项目
+
+etcd 启动后，按以下顺序运行 samples：
+
+```bash
+# 1. 服务提供者
+cd samples/demo-a && gradle :demo-a-service:run
+
+# 2. 服务消费者
+cd samples/demo-b && gradle run
+```
+
+然后访问 http://127.0.0.1:8082/ 验证调用。
+
 # API使用
 Iris核心代码不依赖Spring，可脱离Spring使用。        
-1. 启动etcd注册中心
+1. 启动etcd注册中心（参考[启动 etcd 注册中心](#启动-etcd-注册中心)）
 2. 编写一个接口IHelloService
 ```java
 public interface IHelloService {

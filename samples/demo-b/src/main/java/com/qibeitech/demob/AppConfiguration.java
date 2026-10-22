@@ -1,9 +1,9 @@
 package com.qibeitech.demob;
 
-import com.leibangzhu.iris.client.IRpcClient;
-import com.leibangzhu.iris.client.RpcClient;
-import com.leibangzhu.iris.registry.EtcdRegistry;
-import com.leibangzhu.iris.registry.IRegistry;
+import com.leiwei2094.iris.client.IRpcClient;
+import com.leiwei2094.iris.client.RpcClient;
+import com.leiwei2094.iris.registry.EtcdRegistry;
+import com.leiwei2094.iris.registry.IRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

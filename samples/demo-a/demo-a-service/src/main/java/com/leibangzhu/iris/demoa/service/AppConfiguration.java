@@ -1,10 +1,10 @@
 package com.leibangzhu.iris.demoa.service;
 
-//import com.leibangzhu.iris.core.HelloService;
+//import com.leiwei2094.iris.core.HelloService;
 import com.leibangzhu.iris.demoa.api.IHelloService;
-import com.leibangzhu.iris.registry.EtcdRegistry;
-import com.leibangzhu.iris.registry.IRegistry;
-import com.leibangzhu.iris.server.RpcServer;
+import com.leiwei2094.iris.registry.EtcdRegistry;
+import com.leiwei2094.iris.registry.IRegistry;
+import com.leiwei2094.iris.server.RpcServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

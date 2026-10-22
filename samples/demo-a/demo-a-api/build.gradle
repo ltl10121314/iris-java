@@ -1,26 +1,27 @@
 group 'com.leibangzhu.iris'
 version '1.0.0-SNAPSHOT'
-//description 'iris-sample-api'
 
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
-sourceCompatibility = 1.8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
     mavenLocal()
+    maven { url 'https://maven.aliyun.com/repository/public' }
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testImplementation 'junit:junit:4.11'
 }
 
-uploadArchives {
-    repositories {
-        mavenLocal()
-//        mavenDeployer {
-//            repository(url: "file://Users/leiwei/.m2/repository")
-//        }
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
     }
 }
